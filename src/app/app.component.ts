@@ -43,20 +43,18 @@ export class AppComponent {
   refresh() {
     this.refresh$.next();
   }
-
-  todo1 = combineLatest([
+  private refreshTimers$ = combineLatest([
     this.refresh$.pipe(startWith(0)),
     this.refreshInterval$.pipe(startWith(0)),
   ]).pipe(
     debounceTime(750),
+  );
+
+  todo1 = this.refreshTimers$.pipe(
     switchMap(() => this.http.get<Todo>(this.baseUrl + "/todos/1")),
     shareReplay(1),
   );
-  todo2 = combineLatest([
-    this.refresh$.pipe(startWith(0)),
-    this.refreshInterval$.pipe(startWith(0)),
-  ]).pipe(
-    debounceTime(750),
+  todo2 = this.refreshTimers$.pipe(
     switchMap(() => this.http.get<Todo>(this.baseUrl + "/todos/2")),
     shareReplay(1),
   );
